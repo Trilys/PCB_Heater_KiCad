@@ -12,6 +12,8 @@ import os
 import numpy as np
 #For sqrt
 import math
+#Copy file
+import shutil
 
 #Global vars :
 kicadFile = ""
@@ -22,6 +24,10 @@ length=0
 net=0
 space=0.5
 layer="F.Cu"
+
+#Up current directory
+directory=str(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(directory)
 
 def Help(out):
 	print os.path.basename(__file__) +' -x <size of X> -y <size of Y> -w <size of width> -l <name of layer> -n <number of net> -s <space between wires>'
@@ -92,7 +98,8 @@ def main(argv):
 	print("layer="+layer)
 	
 	#Create a new file kicad_pcb:
-	kicadFile = open("test.kicad_pcb" , "w")
+	shutil.copy("Project/init_pcb","Project/test.kicad_pcb")
+	kicadFile = open("Project/test.kicad_pcb" , "a")
 
 	for i in np.arange(0.0, sizeX, space):
 		#Top Left to top right
@@ -116,8 +123,7 @@ def main(argv):
 			setCoord(i, sizeY-i, i, i+2*space)
 		else:
 			setCoord(i, sizeY-i, sizeX-i-space, i+1*space)
-	return
-	
+	kicadFile.write(")")
 	kicadFile.close()
 	
 
@@ -126,6 +132,16 @@ if __name__ == "__main__":
 	print("---------------------------------------------")
 	print("Size of heater = "+str(length)+"mm.")
 	print("---------------------------------------------")
+	try:
+		launchKicad = input("Open KiCad (Y/n) :")
+	except:
+		launchKicad = 'y'
+	print("launchKicad="+str(launchKicad))
+	if launchKicad!='n' and launchKicad!='N':
+		print("Launch : "+directory+'/Project/test.pro')
+		os.system("kicad "+directory+"/Project/test.pro");
+		
+	
 	print("End of "+os.path.basename(__file__))
 
 # nb = raw_input("Nombre:")	#Demande nb
