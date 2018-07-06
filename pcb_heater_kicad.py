@@ -102,20 +102,20 @@ def main(argv):
 			setCoord(i-space, i, sizeX-i, i)
 		else:
 			setCoord(i-2*space, i, sizeX-i, i)
-		if (i+1>space+sizeX/2 or i+1>space+sizeY/2):
+		if (i>-space+sizeX/2 or i>-space+sizeY/2):
 			if sizeX<sizeY:
 				setCoord(sizeX-i, i, i, sizeY-i)
-				setCoord(i, sizeY-i, i-space, i-space+1)
+				setCoord(i, sizeY-i, i-space, i+space)
 			break
 		#Top right to bottom right
 		setCoord(sizeX-i, i, sizeX-i, sizeY-i)
 		#Bottom right to bottom left
 		setCoord(sizeX-i, sizeY-i, i, sizeY-i)
 		#Bottom left to top left
-		if (sizeY-i!=i+1):
-			setCoord(i, sizeY-i, i, i+1)
+		if (sizeY-i!=i+2*space):
+			setCoord(i, sizeY-i, i, i+2*space)
 		else:
-			setCoord(i, sizeY-i, sizeX-i-space, i+space)
+			setCoord(i, sizeY-i, sizeX-i-space, i+2*space)
 	
 	return
 	
