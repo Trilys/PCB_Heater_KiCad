@@ -24,9 +24,11 @@ space=0.5
 layer="F.Cu"
 
 def Help(out):
-	print os.path.basename(__file__) +' -x <size of X> -y <size of Y>'
+	print os.path.basename(__file__) +' -x <size of X> -y <size of Y> -w <size of width> -l <name of layer> -n <number of net> -s <space between wires>'
+	print("All options are optionnal, default is size X=10mm, Y=10mm, width=0.25mm, net=0, space=0.5mm, layer=F.Cu")
 	print("Example : '"+os.path.basename(__file__) +" -x 10.0 -y 20.5'")
 	print("  will create a sample of track resistor heater (10×20.5mm²)")
+	print("  called test.kicad_pcb in the current folder,")
 	print("  which needs to be included in a .kicad_pcb file.")
 	sys.exit(out)
 
