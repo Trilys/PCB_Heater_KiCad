@@ -78,7 +78,8 @@ def main(argv):
 		print("(start "+str(0+2*i-2*width)+" "+str(0+2*i)+") (end "+str(sizeX-2*i)+" "+str(0+2*i)+")")
 		kicadFile.write("\n  (segment (start "+str(0+2*i-4*width)+" "+str(0+2*i)+") (end "+str(sizeX-2*i)+" "+str(0+2*i)+") (width 0.25) (layer F.Cu) (net 0))")
 		if (2*i+1>2*width+sizeX/2):
-			kicadFile.write("\n  (segment (start "+str(sizeX-2*i)+" "+str(0+2*i)+") (end "+str(2*i-width)+" "+str(sizeY-2*i-width)+") (width 0.25) (layer F.Cu) (net 0))")
+			print("(start "+str(sizeX-2*i)+" "+str(0+2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+")")
+			kicadFile.write("\n  (segment (start "+str(sizeX-2*i)+" "+str(0+2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+") (width 0.25) (layer F.Cu) (net 0))")
 			break
 		#Top right to bottom right
 		print("(start "+str(sizeX-2*i)+" "+str(2*i)+") (end "+str(sizeX-2*i)+" "+str(sizeY-2*i)+")")
