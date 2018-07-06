@@ -18,6 +18,11 @@ def Help(out):
 	print("  which needs to be included in a .kicad_pcb file.")
 	sys.exit(out)
 
+def setCoord(x1, y1, x2, y2, width, layer, net, length):
+	kicadFile.write("\n  (segment (start "+str(x1)+" "+str(y1)+") (end "+str(x2)+" "+str(y2)+") (width "+str(width)+") (layer "+str(layer)+") (net "+str(net)+"))")
+	length+=sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
+	return
+
 def main(argv):
 	sizeX=10.0
 	sizeY=10.0
@@ -25,14 +30,12 @@ def main(argv):
 	length=0
 	net=0
 	space=0.5
+	layer="F.Cu"
 	try:
-		opts, args = getopt.getopt(argv,"hx:y:X:Y:l:L:w:W:n:N:",["help=", "length", "width", "net"])
+		opts, args = getopt.getopt(argv,"hx:y:X:Y:w:W:n:N:s:S:l:L",["help=", "width", "net", "space", "layer"])
 		print("opts="+str(opts)+"len="+str(len(opts)))
 		print("args="+str(args))
 	except getopt.GetoptError:
-		Help(2)
-	if len(opts)!=2:
-		#X and Y not parsed
 		Help(2)
 	for opt, arg in opts:
 		if opt in ("-x", "-X"):
@@ -45,14 +48,14 @@ def main(argv):
 				sizeY = float(arg)
 			except:
 				Help(2)
-		elif opt in ("-l", "-L", "--length"):
-			try:
-				length = float(arg)
-			except:
-				Help(2)
 		elif opt in ("-w", "-W", "--width"):
 			try:
 				width = float(arg)
+			except:
+				Help(2)
+		elif opt in ("-s", "-S", "--space"):
+			try:
+				space = float(arg)
 			except:
 				Help(2)
 		elif opt in ("-n", "-N", "--net"):
@@ -60,36 +63,44 @@ def main(argv):
 				net = int(arg)
 			except:
 				Help(2)
+		elif opt in ("-l", "-L", "--layer"):
+			try:
+				layer = arg
+			except:
+				Help(2)
 		else:
 			Help(0)
 	print("X="+str(sizeX)+"mm")
 	print("Y="+str(sizeY)+"mm")
-	print("length="+str(length))
-	print("width="+str(width))
-	print("Space="+str(space))
+	print("length="+str(length)+"mm")
+	print("width="+str(width)+"mm")
+	print("Space="+str(space)+"mm")
 	print("net="+str(net))
-	print("layer=F.Cu")
+	print("layer="+layer)
 	
 	#Create a new file kicad_pcb:
 	kicadFile = open("test.kicad_pcb" , "w")
 
-	for i in np.arange(0.0, sizeX, width):
+	for i in np.arange(0.0, sizeX, space):
 		#Top Left to top right
-		print("(start "+str(0+2*i-2*width)+" "+str(0+2*i)+") (end "+str(sizeX-2*i)+" "+str(0+2*i)+")")
-		kicadFile.write("\n  (segment (start "+str(0+2*i-4*width)+" "+str(0+2*i)+") (end "+str(sizeX-2*i)+" "+str(0+2*i)+") (width 0.25) (layer F.Cu) (net 0))")
-		if (2*i+1>2*width+sizeX/2):
-			print("(start "+str(sizeX-2*i)+" "+str(0+2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+")")
-			kicadFile.write("\n  (segment (start "+str(sizeX-2*i)+" "+str(0+2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+") (width 0.25) (layer F.Cu) (net 0))")
+		kicadFile.write("\n  (segment (start "+str(i-2*space)+" "+str(i)+") (end "+str(sizeX-i)+" "+str(i)+") (width "+str(width)+") (layer F.Cu) (net 0))")
+		length+=abs((sizeX-i)-(i-2*space))
+		if (i+1>space+sizeX/2 or i+1>space+sizeY/2):
+			if sizeX<sizeY:
+				kicadFile.write("\n  (segment (start "+str(sizeX-i)+" "+str(i)+") (end "+str(i)+" "+str(sizeY-i)+") (width "+str(width)+") (layer F.Cu) (net 0))")
+				length+=sqrt((sizeX-2*i)*(sizeX-2*i)+(sizeY-2*i)*(sizeY-2*i))
+				kicadFile.write("\n  (segment (start "+str(i)+" "+str(sizeY-i)+") (end "+str(i-space)+" "+str(i-space+1)+") (width "+str(width)+") (layer F.Cu) (net 0))")
+				length+=sqrt((sizeX-2*i)*(sizeX-2*i)+(sizeY-2*i)*(sizeY-2*i))
 			break
 		#Top right to bottom right
-		print("(start "+str(sizeX-2*i)+" "+str(2*i)+") (end "+str(sizeX-2*i)+" "+str(sizeY-2*i)+")")
-		kicadFile.write("\n  (segment (start "+str(sizeX-2*i)+" "+str(2*i)+") (end "+str(sizeX-2*i)+" "+str(sizeY-2*i)+") (width 0.25) (layer F.Cu) (net 0))")
+		kicadFile.write("\n  (segment (start "+str(sizeX-i)+" "+str(i)+") (end "+str(sizeX-i)+" "+str(sizeY-i)+") (width "+str(width)+") (layer F.Cu) (net 0))")
 		#Bottom right to bottom left
-		print("(start "+str(sizeX-2*i)+" "+str(sizeY-2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+")")
-		kicadFile.write("\n  (segment (start "+str(sizeX-2*i)+" "+str(sizeY-2*i)+") (end "+str(2*i)+" "+str(sizeY-2*i)+") (width 0.25) (layer F.Cu) (net 0))")
+		kicadFile.write("\n  (segment (start "+str(sizeX-i)+" "+str(sizeY-i)+") (end "+str(i)+" "+str(sizeY-i)+") (width "+str(width)+") (layer F.Cu) (net 0))")
 		#Bottom left to top left
-		print("(start "+str(2*i)+" "+str(sizeY-2*i)+") (end "+str(2*i)+" "+str(2*i+1)+")")
-		kicadFile.write("\n  (segment (start "+str(2*i)+" "+str(sizeY-2*i)+") (end "+str(2*i)+" "+str(2*i+1)+") (width 0.25) (layer F.Cu) (net 0))")
+		if (sizeY-i!=i+1):
+			kicadFile.write("\n  (segment (start "+str(i)+" "+str(sizeY-i)+") (end "+str(i)+" "+str(i+1)+") (width "+str(width)+") (layer F.Cu) (net 0))")
+		else:
+			kicadFile.write("\n  (segment (start "+str(i)+" "+str(sizeY-i)+") (end "+str(sizeX-i-space)+" "+str(i+space)+") (width "+str(width)+") (layer F.Cu) (net 0))")
 	
 	return
 	
