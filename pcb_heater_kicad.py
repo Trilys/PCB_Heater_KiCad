@@ -115,8 +115,7 @@ def main(argv):
 		if (sizeY-i!=i+2*space):
 			setCoord(i, sizeY-i, i, i+2*space)
 		else:
-			setCoord(i, sizeY-i, sizeX-i-space, i+2*space)
-	
+			setCoord(i, sizeY-i, sizeX-i-space, i+1*space)
 	return
 	
 	kicadFile.close()
