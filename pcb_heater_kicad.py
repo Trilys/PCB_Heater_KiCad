@@ -123,24 +123,22 @@ def main(argv):
 			setCoord(i, sizeY-i, i, i+2*space)
 		else:
 			setCoord(i, sizeY-i, sizeX-i-space, i+1*space)
-	kicadFile.write(")")
+	kicadFile.write("\n\n)")
 	kicadFile.close()
 	
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
 	print("---------------------------------------------")
-	print("Size of heater = "+str(length)+"mm.")
+	print("   Size of heater = "+str(length)+"mm.")
 	print("---------------------------------------------")
 	try:
-		launchKicad = input("Open KiCad (Y/n) :")
+		launchKicad = raw_input("Open KiCad (Y/n) :")
 	except:
 		launchKicad = 'y'
-	print("launchKicad="+str(launchKicad))
 	if launchKicad!='n' and launchKicad!='N':
 		print("Launch : "+directory+'/Project/test.pro')
 		os.system("kicad "+directory+"/Project/test.pro");
-		
 	
 	print("End of "+os.path.basename(__file__))
 
